@@ -323,20 +323,19 @@ def download_individual_files(files, split_dir):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process and manage dataset directory.")
     parser.add_argument(
-        "--data_dir",
+        "data_dir",
         type=str,
-        default='mnt/MVT/data',
         help="Path to the dataset directory"
     )
 
     args = parser.parse_args()
     data_dir = args.data_dir
-    print('data_dir: ', data_dir)
-    print()
     debug = False
 
-    # check directory exists
     assert os.path.isdir(data_dir)
+    print('data_dir: ', data_dir)
+
+    # check directory exists
     depthtrack_dir = os.path.join(data_dir, 'depthtrack/')
     train_dir = os.path.join(depthtrack_dir, 'train/')
     val_dir = os.path.join(depthtrack_dir, 'train/')
@@ -347,7 +346,7 @@ if __name__ == "__main__":
         assert os.path.isdir(val_dir)
         assert os.path.isdir(test_dir)
     except:
-        s = input(f'deleting old files in {data_dir}, enter "y" to continue: ')
+        s = input(f'creating new depthtrack directory in {data_dir}, enter "y" to continue: ')
         assert s == 'y'
         shutil.rmtree(depthtrack_dir, ignore_errors=True)
         os.makedirs(depthtrack_dir, exist_ok=False)
