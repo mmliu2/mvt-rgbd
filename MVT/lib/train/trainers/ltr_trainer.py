@@ -365,7 +365,6 @@ class LTRTrainerDepth(LTRTrainer):
 
             # backward pass and update weights
             if loader.training:
-                # TODO_ASSERT frozen params
                 self.optimizer.zero_grad()
                 if not self.use_amp:
                     loss.backward()

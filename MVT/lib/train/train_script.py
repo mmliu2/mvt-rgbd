@@ -86,15 +86,12 @@ def run(settings):
     # TODO_CHECKPOINT mvt
     missing, unexpected = net.load_state_dict(state_dict, strict=False)
 
-    # TODO_FREEZE
     if settings.freeze:
         for name, param in net.named_parameters():
             if 'prompt' in name:
                 param.requires_grad = True
-                # print('train:', name)
             else:
                 param.requires_grad = False
-                # print('freeze:', name)
 
     print()
     # Total number of parameters
