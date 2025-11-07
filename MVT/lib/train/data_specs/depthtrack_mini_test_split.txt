@@ -1,0 +1,3 @@
+pigeon04_wild
+ball15_wild
+lock02_indoor

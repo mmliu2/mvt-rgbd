@@ -1,0 +1,8 @@
+leaves01_wild
+duck02_wild
+cat03_indoor
+bottle06_indoor
+mushroom02_wild
+bike02_wild
+toydog_indoor
+lock01_wild
