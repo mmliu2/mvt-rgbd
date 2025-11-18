@@ -76,16 +76,56 @@ class DepthTrackDataset(BaseDataset):
     def __len__(self):
         return len(self.sequence_list)
 
-    def _get_sequence_list(self): # TODO_TEST_FILES
+    def _get_sequence_list(self):
         sequence_list = '''adapter01_indoor
-ball06_indoor
-ball20_indoor
-card_indoor
-cube05_indoor
-developmentboard_indoor
-flag_indoor
-mobilephone03_indoor
-pot_indoor
-toiletpaper01_indoor'''.strip().split()
+ball18_indoor
+cube02_indoor            
+dumbbells01_indoor    
+notebook01_indoor  
+toiletpaper01_indoor
+backpack_indoor   
+ball20_indoor            
+cube03_indoor            
+earphone01_indoor     
+pigeon01_wild      
+toy02_indoor
+bag01_indoor      
+bandlight_indoor         
+cube05_indoor            
+file01_indoor         
+pigeon02_wild      
+toy09_indoor
+bag02_indoor      
+beautifullight02_indoor  
+cup01_indoor             
+flag_indoor           
+pigeon04_wild      
+ukulele01_indoor
+ball01_wild       
+book03_indoor            
+cup02_indoor             
+glass01_indoor        
+pot_indoor         
+yogurt_indoor
+ball06_indoor     
+bottle04_indoor          
+cup04_indoor             
+hand01_indoor         
+roller_indoor
+ball10_wild       
+card_indoor              
+cup12_indoor             
+human02_indoor        
+shoes02_indoor
+ball11_wild       
+cat01_indoor             
+developmentboard_indoor  
+lock02_indoor         
+squirrel_wild
+ball15_wild       
+colacan03_indoor         
+duck03_wild              
+mobilephone03_indoor  
+stick_indoor'''.strip().split()
 
         return sequence_list

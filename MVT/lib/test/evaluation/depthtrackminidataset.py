@@ -8,7 +8,7 @@ class DepthTrackMiniDataset(BaseDataset):
     """
     def __init__(self, dtype='rgbd'):
         super().__init__()
-        self.base_path = self.env_settings.depthtrack_mini_path
+        self.base_path = self.env_settings.depthtrack_path
         self.sequence_list = self._get_sequence_list()
         self.dtype = dtype
 
@@ -77,6 +77,6 @@ class DepthTrackMiniDataset(BaseDataset):
         return len(self.sequence_list)
 
     def _get_sequence_list(self):
-        sequence_list = '''flower03_indoor'''.strip().split() # TODO_TEST_FILES
+        sequence_list = '''adapter01_indoor'''.strip().split()
 
         return sequence_list

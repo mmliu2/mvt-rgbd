@@ -27,9 +27,11 @@ dataset_dict = dict(
     lasot_extension_subset=DatasetInfo(module=pt % "lasotextensionsubset", class_name="LaSOTExtensionSubsetDataset",
                                        kwargs=dict()),
 
-    depthtrack=DatasetInfo(module=pt % "depthtrack", class_name="DepthTrackDataset", kwargs=dict()), # TODO_EVAL
-    depthtrackmed=DatasetInfo(module=pt % "depthtrackmed", class_name="DepthTrackMedDataset", kwargs=dict()),
+    depthtrack=DatasetInfo(module=pt % "depthtrack", class_name="DepthTrackDataset", kwargs=dict()),
     depthtrackmini=DatasetInfo(module=pt % "depthtrackmini", class_name="DepthTrackMiniDataset", kwargs=dict()),
+
+    depthtrack_rgb=DatasetInfo(module=pt % "depthtrack_rgb", class_name="DepthTrackRGBDataset", kwargs=dict()),
+    depthtrackmini_rgb=DatasetInfo(module=pt % "depthtrackmini_rgb", class_name="DepthTrackMiniRGBDataset", kwargs=dict()),
 )
 
 

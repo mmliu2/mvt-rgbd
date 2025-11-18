@@ -2,11 +2,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import sys
 
-<<<<<<< HEAD
 data_path = 'plotting'
-=======
-data_path = 'plots/'
->>>>>>> 049cb172bfda5be06fcd9bddd417aa39ce26eca4
 train_epochs = [*range(1, 26)]
 test_epochs = [*range(5, 26, 5)]
 

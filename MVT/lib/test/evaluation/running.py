@@ -105,7 +105,7 @@ def _save_tracker_output(seq: Sequence, tracker: Tracker, output: dict):
                 save_time(timings_file, data)
 
 
-def run_sequence(seq: Sequence, tracker: Tracker, debug=False, num_gpu=8):
+def run_sequence(seq: Sequence, tracker: Tracker, debug=False, num_gpu=8, dte=False):
     """Runs a tracker on a sequence."""
     '''2021.1.2 Add multiple gpu support'''
     try:
@@ -165,7 +165,7 @@ def run_sequence(seq: Sequence, tracker: Tracker, debug=False, num_gpu=8):
         _save_tracker_output(seq, tracker, output)
 
 
-def run_dataset(dataset, trackers, debug=False, threads=0, num_gpus=8):
+def run_dataset(dataset, trackers, debug=False, threads=0, num_gpus=8, dte=False):
     """Runs a list of trackers on a dataset.
     args:
         dataset: List of Sequence instances, forming a dataset.
@@ -188,7 +188,7 @@ def run_dataset(dataset, trackers, debug=False, threads=0, num_gpus=8):
     if mode == 'sequential':
         for seq in dataset:
             for tracker_info in trackers:
-                run_sequence(seq, tracker_info, debug=debug)
+                run_sequence(seq, tracker_info, debug=debug, dte=dte)
     elif mode == 'parallel':
         param_list = [(seq, tracker_info, debug, num_gpus) for seq, tracker_info in product(dataset, trackers)]
         with multiprocessing.Pool(processes=threads) as pool:

@@ -21,7 +21,8 @@ class MobileViTTrack(BaseTracker):
     def __init__(self, params, dataset_name):
         super(MobileViTTrack, self).__init__(params)
         network = build_mobilevit_track(params.cfg, training=False)
-        network.load_state_dict(torch.load(self.params.checkpoint, map_location='cpu')['net'], strict=True)
+        # network.load_state_dict(torch.load(self.params.checkpoint, map_location='cpu')['net'], strict=True)
+        network.load_state_dict(torch.load(self.params.checkpoint, map_location='cpu', weights_only=False)['net'], strict=True)
         self.cfg = params.cfg
         if self.cfg.TEST.DEVICE == 'cpu':
             self.device = 'cpu'

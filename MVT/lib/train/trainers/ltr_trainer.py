@@ -127,7 +127,7 @@ class LTRTrainer(BaseTrainer):
 
             # compute the AOR and SR values for got10k-val dataset (currently supported under single-GPU training only)
             if loader.training is False and i == len(loader) \
-                    and self.settings.local_rank == -1 and self.epoch % 10 == 0:
+                    and self.settings.local_rank == -1 and self.epoch % 5 == 0:
 
                 # 0. Save the model to a temporary folder
                 tmp_folder = os.path.join('tmp_folder', self.settings.cfg_file.split('/')[-1].split('.')[0])
@@ -323,7 +323,7 @@ class LTRTrainerDepth(LTRTrainer):
                         self.lr_scheduler.step(epoch - 1)
                 # only save the last 10 checkpoints
                 save_every_epoch = getattr(self.settings, "save_every_epoch", False)
-                if epoch > (max_epochs - 1) or save_every_epoch or epoch % 10 == 0 or epoch > (max_epochs - 5):
+                if epoch > (max_epochs - 1) or save_every_epoch or epoch % 5 == 0 or epoch > (max_epochs - 5):
                     if self._checkpoint_dir:
                         if self.settings.local_rank in [-1, 0]:
                             self.save_checkpoint()

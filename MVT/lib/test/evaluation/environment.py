@@ -82,9 +82,7 @@ class EnvSettings_ITP:
         self.got_packed_results_path = ''
         self.got_reports_path = ''
         self.tn_packed_results_path = ''
-
-        self.depthtrack_mini_path = os.path.join(data_dir, 'depthtrack_mini/test') # TODO_EVAL
-        self.depthtrack_med_path = os.path.join(data_dir, 'depthtrack_med/test')
+        
         self.depthtrack_path = os.path.join(data_dir, 'depthtrack/test')
 
 

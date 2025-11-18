@@ -63,7 +63,7 @@ class Tracker:
         tracker = self.tracker_class(params, self.dataset_name)
         return tracker
 
-    def run_sequence(self, seq, debug=None):
+    def run_sequence(self, seq, debug=None, dte=False):
         """Run tracker on sequence.
         args:
             seq: Sequence to run the tracker on.
@@ -84,10 +84,10 @@ class Tracker:
 
         tracker = self.create_tracker(params)
 
-        output = self._track_sequence(tracker, seq, init_info)
+        output = self._track_sequence(tracker, seq, init_info, dte=dte)
         return output
 
-    def _track_sequence(self, tracker, seq, init_info):
+    def _track_sequence(self, tracker, seq, init_info, dte=False):
         # Define outputs
         # Each field in output is a list containing tracker prediction for each frame.
 
