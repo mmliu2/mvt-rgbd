@@ -6,7 +6,7 @@ from lib.utils.merge import merge_template_search
 from ...utils.heapmap_utils import generate_heatmap
 from ...utils.ce_utils import generate_mask_cond, adjust_keep_rate
 
-class MobileViTTrackActorDepth(BaseActor):
+class MobileViTViPTTrackActor(BaseActor):
     """ Actor for training MobileViT-Track models """
 
     def __init__(self, net, objective, loss_weight, settings, cfg=None):
@@ -42,19 +42,25 @@ class MobileViTTrackActorDepth(BaseActor):
         assert len(data['search_images']) == 1
 
         template_list = []
+        template_list_dte = []
         for i in range(self.settings.num_template):
-            template_img_i = data['template_images'][i].view(-1, *data['template_images'].shape[2:])  # (batch, 3, 128, 128)
-            # template_att_i = data['template_att'][i].view(-1, *data['template_att'].shape[2:])  # (batch, 128, 128)
+            template_img_rgbdte_i = data['template_images'][i].view(-1, *data['template_images'].shape[2:])  # (batch, 6, 128, 128)
+            template_img_i, template_img_dte_i = template_img_rgbdte_i[:, :3], template_img_rgbdte_i[:, 3:]
             template_list.append(template_img_i)
+            template_list_dte.append(template_img_dte_i)
 
-        search_img = data['search_images'][0].view(-1, *data['search_images'].shape[2:])  # (batch, 3, 320, 320)
-        # search_att = data['search_att'][0].view(-1, *data['search_att'].shape[2:])  # (batch, 320, 320)
+        search_img_rgbdte = data['search_images'][0].view(-1, *data['search_images'].shape[2:])  # (batch, 6, 320, 320)
+        search_img, search_img_dte = search_img_rgbdte[:, :3], search_img_rgbdte[:, 3:]
 
         if len(template_list) == 1:
             template_list = template_list[0]
+        if len(template_list_dte) == 1:
+            template_list_dte = template_list_dte[0]
 
         out_dict = self.net(template=template_list,
-                            search=search_img)
+                            search=search_img,
+                            template_dte=template_list_dte,
+                            search_dte=search_img_dte)
 
         return out_dict
     
@@ -99,7 +105,10 @@ class MobileViTTrackActorDepth(BaseActor):
 
         pr = tp / (tp + fp)
         re = tp / (tp + fn)
-        f1 = 2 * pr * re / (pr + re)
+        if (pr + re) == 0.0:
+            f1 = 0.0
+        else:
+            f1 = 2 * pr * re / (pr + re)
 
         if return_status:
             # status for log
@@ -117,6 +126,7 @@ class MobileViTTrackActorDepth(BaseActor):
         else:
             return loss
         
+
 class MobileViTTrackActor(BaseActor):
     """ Actor for training MobileViT-Track models """
 

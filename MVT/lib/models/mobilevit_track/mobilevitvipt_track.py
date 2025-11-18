@@ -1,5 +1,5 @@
 """
-Basic MobileViT-Track model.
+MobileViT-Track model with ViPT. 
 """
 import math
 import os
@@ -13,11 +13,11 @@ from .layers.neck_lighttrack import build_neck, build_feature_fusor
 
 from .layers.head import build_box_head
 
-from lib.models.mobilevit_track.mobilevit_depth import MobileViTDepth
+from lib.models.mobilevit_track.mobilevitvipt import MobileViTViPT
 from lib.utils.box_ops import box_xyxy_to_cxcywh
 from easydict import EasyDict as edict
 
-class MobileViT_Track_Depth(nn.Module):
+class MobileViTViPT_Track(nn.Module):
     """ This is the base class for MobileViT-Track """
 
     def __init__(self, backbone, neck, feature_fusor, box_head, aux_loss=False, head_type="CORNER"):
@@ -45,8 +45,10 @@ class MobileViT_Track_Depth(nn.Module):
         if self.aux_loss:
             self.box_head = _get_clones(self.box_head, 6)
 
-    def forward(self, template: torch.Tensor, search: torch.Tensor):
-        x, z = self.backbone(x=search, z=template)
+    # def forward(self, template: torch.Tensor, search: torch.Tensor):
+    def forward(self, template: torch.Tensor, search: torch.Tensor, template_dte: torch.Tensor, search_dte: torch.Tensor):
+        # x, z = self.backbone(x=search, z=template)
+        x, z = self.backbone(x=search, z=template, x_dte=search_dte, z_dte=template_dte)
 
         # Forward neck
         x, z = self.neck(x, z)
@@ -133,7 +135,7 @@ class MobileViT_Track_Depth(nn.Module):
             raise NotImplementedError
 
 
-def build_mobilevit_track_depth(cfg, training=False): # training=True):
+def build_mobilevitvipt_track(cfg, training=False): # training=True):
     """
     function to create the hybrid-stream tracker with MobileViT backbone
     Args:
@@ -154,11 +156,11 @@ def build_mobilevit_track_depth(cfg, training=False): # training=True):
         pretrained = ''
 
     if cfg.MODEL.BACKBONE.TYPE == 'mobilevit_s':
-        backbone = create_mobilevitdepth_backbone(pretrained, training=training)
+        backbone = create_mobilevitvipt_backbone(pretrained, training=training)
         hidden_dim = backbone.model_conf_dict['layer4']['out']
         patch_start_index = 1
     elif cfg.MODEL.BACKBONE.TYPE == 'mobilevit_xs':
-        backbone = create_mobilevitdepth_backbone(pretrained, training=training)
+        backbone = create_mobilevitvipt_backbone(pretrained, training=training)
         hidden_dim = backbone.model_conf_dict['layer4']['out']
         patch_start_index = 1
     else:
@@ -194,7 +196,7 @@ def build_mobilevit_track_depth(cfg, training=False): # training=True):
     box_head = build_box_head(cfg, cfg.MODEL.HEAD.NUM_CHANNELS)
 
     # create the MobileViT-based tracker
-    model = MobileViT_Track_Depth(
+    model = MobileViTViPT_Track(
         backbone,
         neck,
         feature_fusor,
@@ -217,7 +219,7 @@ def build_mobilevit_track_depth(cfg, training=False): # training=True):
     return model
 
 
-def create_mobilevitdepth_backbone(pretrained, training=False):
+def create_mobilevitvipt_backbone(pretrained, training=False):
     """
     function to create an instance of MobileViT backbone
     Args:
@@ -234,7 +236,7 @@ def create_mobilevitdepth_backbone(pretrained, training=False):
     opts['number_heads'] = 4
     opts['conv_layer_normalization_name'] = 'batch_norm'
     opts['conv_layer_activation_name'] = 'relu'
-    model = MobileViTDepth(opts, training=training)
+    model = MobileViTViPT(opts, training=training)
 
     # do not need to load mobilevit for depth
 
@@ -249,4 +251,3 @@ def create_mobilevitdepth_backbone(pretrained, training=False):
     #     print('Load pretrained model from: ' + pretrained)
 
     return model
-

@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import sys
 
-data_path = '/home/mmliu/dl_project/plots/'
+data_path = 'plotting'
 train_epochs = [*range(1, 26)]
 test_epochs = [*range(5, 26, 5)]
 

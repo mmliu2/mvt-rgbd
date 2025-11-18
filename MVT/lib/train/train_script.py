@@ -11,9 +11,9 @@ from torch.nn.parallel import DistributedDataParallel as DDP
 from .base_functions import *
 # network related
 from lib.models.mobilevit_track.mobilevit_track import build_mobilevit_track
-from lib.models.mobilevit_track.mobilevit_track_depth import build_mobilevit_track_depth
+from lib.models.mobilevit_track.mobilevitvipt_track import build_mobilevitvipt_track
 # forward propagation related
-from lib.train.actors import MobileViTTrackActor, MobileViTTrackActorDepth
+from lib.train.actors import MobileViTTrackActor, MobileViTViPTTrackActor
 # for import modules
 import importlib
 
@@ -60,7 +60,7 @@ def run(settings):
     if settings.script_name == 'mobilevit_track':
         net = build_mobilevit_track(cfg)
     elif settings.script_name == 'mobilevit_track_depth':
-        net = build_mobilevit_track_depth(cfg, training=True)
+        net = build_mobilevitvipt_track(cfg, training=True)
     else:
         raise ValueError("illegal script name")
 
@@ -83,17 +83,18 @@ def run(settings):
     state_dict = {name:state_dict[name] for name in state_dict if 'backbone.conv_1' not in name}
     print(f"Loaded {len(state_dict)} tensors from checkpoint:\n")
 
-    # TODO_CHECKPOINT mvt
+    # TODO_CHECKPOINT loading mvt checkpoint
     missing, unexpected = net.load_state_dict(state_dict, strict=False)
 
-    # TODO_FREEZE
+    # TODO_FREEZE unfreeze params with 'dte'
     for name, param in net.named_parameters():
-        if 'adapter' not in name and 'backbone.conv_1' not in name:
+        if 'dte' in name:
             param.requires_grad = True
-            # print('train:', name)
+            # print('learnable params:', name)
         else:
             param.requires_grad = False
-            # print('freeze:', name)
+            # print('  frozen params:', name)
+
     print()
     # Total number of parameters
     total_params = sum(p.numel() for p in net.parameters())
@@ -132,7 +133,7 @@ def run(settings):
         focal_loss = FocalLoss()
         objective = {'giou': giou_loss, 'l1': l1_loss, 'focal': focal_loss, 'cls': BCEWithLogitsLoss(), 'pixelwise': box_pixelwise_metrics}
         loss_weight = {'giou': cfg.TRAIN.GIOU_WEIGHT, 'l1': cfg.TRAIN.L1_WEIGHT, 'focal': 1., 'cls': 1.0}
-        actor = MobileViTTrackActorDepth(net=net, objective=objective, loss_weight=loss_weight, settings=settings, cfg=cfg)
+        actor = MobileViTViPTTrackActor(net=net, objective=objective, loss_weight=loss_weight, settings=settings, cfg=cfg)
 
         # if cfg.TRAIN.DEEP_SUPERVISION:
         #     raise ValueError("Deep supervision is not supported now.")
@@ -147,5 +148,5 @@ def run(settings):
         raise ValueError("illegal script name")
 
     # train process
-    trainer.train(cfg.TRAIN.EPOCH, load_latest=False, fail_safe=True) # TODO_CHECKPOINT weight loading broken
+    trainer.train(cfg.TRAIN.EPOCH, load_latest=False, fail_safe=True) 
     # trainer.train(cfg.TRAIN.EPOCH, load_latest=True, fail_safe=True) 

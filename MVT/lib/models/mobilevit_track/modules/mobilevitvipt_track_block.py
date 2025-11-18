@@ -9,9 +9,9 @@ import math
 import torch
 from torch.nn import functional as F
 from typing import Optional, Dict, Tuple, Union, Sequence
-from .mobilevit_depth_block import MobileViTDepthBlock, MobileViTBlockv2
+from .mobilevitvipt_block import MobileViTViPTBlock, MobileViTBlockv2
 
-class MobileViT_Track_Depth_Block(MobileViTDepthBlock):
+class MobileViTViPT_Track_Block(MobileViTViPTBlock):
     """
     This class defines the `MobileViT block <https://arxiv.org/abs/2110.02178?context=cs.LG>`_
     """
@@ -40,15 +40,36 @@ class MobileViT_Track_Depth_Block(MobileViTDepthBlock):
                          dropout, ffn_dropout, patch_h, patch_w, transformer_norm_layer, conv_ksize, dilation,
                          no_fusion, *args, **kwargs)
 
-    def forward(self, x: Tensor, z: Tensor):
-        return self.forward_spatial(x, z)
+    def forward(self, x: Tensor, z: Tensor, x_dte: Tensor, z_dte: Tensor):
+        return self.forward_spatial(x, z, x_dte, z_dte)
 
-    def forward_spatial(self, x: Tensor, z: Tensor) -> Tensor:
+    def forward_spatial(self, x: Tensor, z: Tensor, x_dte: Tensor, z_dte: Tensor) -> Tensor:
+        # from vipt
+
+        # z_feat = token2feature(self.prompt_norms[0](z))
+        # x_feat = token2feature(self.prompt_norms[0](x))
+        # z_dte_feat = token2feature(self.prompt_norms[0](z_dte))
+        # x_dte_feat = token2feature(self.prompt_norms[0](x_dte))
+
+        # z_feat = torch.cat([z_feat, z_dte_feat], dim=1)
+        # x_feat = torch.cat([x_feat, x_dte_feat], dim=1)
+        # z_feat = self.prompt_blocks[0](z_feat)
+        # x_feat = self.prompt_blocks[0](x_feat)
+        
+        # z_dte = feature2token(z_feat)
+        # x_dte = feature2token(x_feat)
+        # z_prompted, x_prompted = z_dte, x_dte
+
         res_x = x
         res_z = z
 
         fm_x = self.local_rep(x)
         fm_z = self.local_rep(z)
+        fm_x_dte = self.local_rep(x_dte) #
+        fm_z_dte = self.local_rep(z_dte) #
+
+        fm_x = self.dte_prompt_block(fm_x, fm_x_dte) # 
+        fm_z = self.dte_prompt_block(fm_z, fm_z_dte) #
 
         # convert feature map to patches
         patches_x, info_dict_x = self.unfolding(fm_x)
