@@ -7,8 +7,8 @@ from ...utils.heapmap_utils import generate_heatmap
 from ...utils.ce_utils import generate_mask_cond, adjust_keep_rate
 
 import torch.nn.functional as F
-
-class MobileViTViPTTrackActor(BaseActor):
+    
+class MobileViTDepthTrackActor(BaseActor):
     """ Actor for training MobileViT-Track models """
 
     def __init__(self, net, objective, loss_weight, settings, cfg=None):

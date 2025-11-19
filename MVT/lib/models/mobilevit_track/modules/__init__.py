@@ -12,7 +12,6 @@ from .transformer import TransformerEncoder
 from .pspnet_module import PSP
 from .mobilevit_block import MobileViTBlock, MobileViTBlockv2
 from .mobilevit_track_block import MobileViT_Track_Block, MobileViTv2_Track_Block
-from .mobilevit_track_vipt_block import MobileViT_Track_ViPT_Block
 from .feature_pyramid import FeaturePyramidNetwork
 from .ssd_heads import SSDHead, SSDInstanceHead
 from .efficientnet import EfficientNetBlock
@@ -31,7 +30,6 @@ __all__ = [
     "MobileViTBlock",
     "MobileViTBlockv2",
     "MobileViT_Track_Block",
-    "MobileViT_Track_ViPT_Block",
     "MobileViTv2_Track_Block",
     "FeaturePyramidNetwork",
     "SSDHead",

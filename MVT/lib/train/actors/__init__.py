@@ -1,2 +1,2 @@
 from .base_actor import BaseActor
-from .mobilevit_track import MobileViTTrackActor, MobileViTViPTTrackActor
+from .mobilevit_track import MobileViTTrackActor, MobileViTDepthTrackActor

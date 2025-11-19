@@ -11,9 +11,9 @@ from torch.nn.parallel import DistributedDataParallel as DDP
 from .base_functions import *
 # network related
 from lib.models.mobilevit_track.mobilevit_track import build_mobilevit_track
-from lib.models.mobilevit_track.mobilevit_track_vipt import build_mobilevit_track_vipt
+from lib.models.mobilevit_track.mobilevit_track_det import build_mobilevit_track_det
 # forward propagation related
-from lib.train.actors import MobileViTTrackActor, MobileViTViPTTrackActor
+from lib.train.actors import MobileViTTrackActor, MobileViTDepthTrackActor
 # for import modules
 import importlib
 
@@ -59,8 +59,8 @@ def run(settings):
     # Create network
     if settings.script_name == 'mobilevit_track':
         net = build_mobilevit_track(cfg)
-    elif settings.script_name == 'mobilevit_track_vipt':
-        net = build_mobilevit_track_vipt(cfg, training=True)
+    elif settings.script_name == 'mobilevit_track_det':
+        net = build_mobilevit_track_det(cfg, training=True)
     else:
         raise ValueError("illegal script name")
 
@@ -85,16 +85,6 @@ def run(settings):
 
     # TODO_CHECKPOINT loading mvt checkpoint
     missing, unexpected = net.load_state_dict(state_dict, strict=False)
-
-    # TODO_FREEZE unfreeze params with 'dte'
-    for name, param in net.named_parameters(): # TODO_FREEZE
-        if 'dte' in name:
-        # if 'dte' in name or 'head' in name or 'neck' in name:
-            param.requires_grad = True
-            # print('learnable params:', name)
-        else:
-            param.requires_grad = False
-            # print('  frozen params:', name)
 
     print()
     # Total number of parameters
@@ -130,11 +120,11 @@ def run(settings):
         use_amp = getattr(cfg.TRAIN, "AMP", False)
         trainer = LTRTrainer(actor, [loader_train, loader_val], optimizer, settings, lr_scheduler, use_amp=use_amp)
 
-    elif settings.script_name == "mobilevit_track_vipt":
+    elif settings.script_name == "mobilevit_track_det":
         focal_loss = FocalLoss()
         objective = {'giou': giou_loss, 'l1': l1_loss, 'focal': focal_loss, 'cls': BCEWithLogitsLoss(), 'pixelwise': box_pixelwise_metrics}
         loss_weight = {'giou': cfg.TRAIN.GIOU_WEIGHT, 'l1': cfg.TRAIN.L1_WEIGHT, 'focal': 1., 'cls': 1.0}
-        actor = MobileViTViPTTrackActor(net=net, objective=objective, loss_weight=loss_weight, settings=settings, cfg=cfg)
+        actor = MobileViTDepthTrackActor(net=net, objective=objective, loss_weight=loss_weight, settings=settings, cfg=cfg)
 
         # if cfg.TRAIN.DEEP_SUPERVISION:
         #     raise ValueError("Deep supervision is not supported now.")
