@@ -87,8 +87,9 @@ def run(settings):
     missing, unexpected = net.load_state_dict(state_dict, strict=False)
 
     # TODO_FREEZE unfreeze params with 'dte'
-    for name, param in net.named_parameters():
+    for name, param in net.named_parameters(): # TODO_FREEZE
         if 'dte' in name:
+        # if 'dte' in name or 'head' in name or 'neck' in name:
             param.requires_grad = True
             # print('learnable params:', name)
         else:

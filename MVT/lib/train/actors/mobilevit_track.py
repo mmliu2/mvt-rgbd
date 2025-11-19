@@ -6,6 +6,8 @@ from lib.utils.merge import merge_template_search
 from ...utils.heapmap_utils import generate_heatmap
 from ...utils.ce_utils import generate_mask_cond, adjust_keep_rate
 
+import torch.nn.functional as F
+
 class MobileViTViPTTrackActor(BaseActor):
     """ Actor for training MobileViT-Track models """
 
@@ -98,6 +100,8 @@ class MobileViTViPTTrackActor(BaseActor):
         # weighted sum
         loss = self.loss_weight['giou'] * giou_loss + self.loss_weight['l1'] * l1_loss + self.loss_weight['focal'] * location_loss
         
+        # mse_loss = F.mse_loss(pred_boxes_vec, gt_boxes_vec)
+        # loss = mse_loss
 
         
         # DEPTHTRACK METRICS
