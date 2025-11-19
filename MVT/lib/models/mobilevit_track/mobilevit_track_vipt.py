@@ -13,11 +13,11 @@ from .layers.neck_lighttrack import build_neck, build_feature_fusor
 
 from .layers.head import build_box_head
 
-from lib.models.mobilevit_track.mobilevitvipt import MobileViTViPT
+from lib.models.mobilevit_track.mobilevit_vipt import MobileViTViPT
 from lib.utils.box_ops import box_xyxy_to_cxcywh
 from easydict import EasyDict as edict
 
-class MobileViTViPT_Track(nn.Module):
+class MobileViT_Track_ViPT(nn.Module):
     """ This is the base class for MobileViT-Track """
 
     def __init__(self, backbone, neck, feature_fusor, box_head, aux_loss=False, head_type="CORNER"):
@@ -135,7 +135,7 @@ class MobileViTViPT_Track(nn.Module):
             raise NotImplementedError
 
 
-def build_mobilevitvipt_track(cfg, training=False): # training=True):
+def build_mobilevit_track_vipt(cfg, training=False): # training=True):
     """
     function to create the hybrid-stream tracker with MobileViT backbone
     Args:
@@ -196,7 +196,7 @@ def build_mobilevitvipt_track(cfg, training=False): # training=True):
     box_head = build_box_head(cfg, cfg.MODEL.HEAD.NUM_CHANNELS)
 
     # create the MobileViT-based tracker
-    model = MobileViTViPT_Track(
+    model = MobileViT_Track_ViPT(
         backbone,
         neck,
         feature_fusor,

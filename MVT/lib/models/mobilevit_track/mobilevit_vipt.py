@@ -12,7 +12,7 @@ from .cvnets_utils import logger
 # from . import register_cls_models
 from .config.mobilevitvipt import get_configuration
 from .layers import ConvLayer
-from .modules import InvertedResidual, MobileViT_Track_Block, MobileViTViPT_Track_Block
+from .modules import InvertedResidual, MobileViT_Track_Block, MobileViT_Track_ViPT_Block
 from .base_backbone_vipt import BaseEncoderViPT
 
 
@@ -264,8 +264,7 @@ class MobileViTViPT(BaseEncoderViPT):
                 "Got {} and {}.".format(transformer_dim, head_dim)
             )
 
-        block.append(
-            MobileViTViPT_Track_Block(
+        block.append(MobileViT_Track_ViPT_Block(
                 opts=opts,
                 in_channels=input_channel,
                 transformer_dim=transformer_dim,

@@ -2,7 +2,7 @@
 
 cd MVT
 python tracking/train_depth.py \
-    --script mobilevitvitp_track_depth \
+    --script mobilevit_track_vipt \
     --config mvtvipt_MINI_256_128x1_depthtrack \
     --save_dir ../output \
     --mode single

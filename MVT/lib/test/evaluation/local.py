@@ -6,8 +6,6 @@ def local_env_settings():
     # Set your local paths here.
 
     settings.davis_dir = ''
-    settings.depthtrack_med_path = '/mnt/mvt-rgbd/data/depthtrack_med/test'
-    settings.depthtrack_mini_path = '/mnt/mvt-rgbd/data/depthtrack_mini/test'
     settings.depthtrack_path = '/mnt/mvt-rgbd/data/depthtrack/test'
     settings.got10k_lmdb_path = '/mnt/mvt-rgbd/data/got10k_lmdb'
     settings.got10k_path = '/mnt/mvt-rgbd/data/got10k'

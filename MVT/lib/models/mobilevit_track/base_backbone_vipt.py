@@ -19,7 +19,6 @@ class BaseEncoderViPT(nn.Module):
         super().__init__()
 
         self.conv_1 = None
-<<<<<<< HEAD:MVT/lib/models/mobilevit_track/base_backbone_vipt.py
         self.conv_1_dte = None
         self.layer_1 = None
         self.layer_1_dte = None
@@ -27,19 +26,6 @@ class BaseEncoderViPT(nn.Module):
         self.layer_2_dte = None
         self.layer_3_vipt = None
         self.layer_4 = None
-=======
-        self.conv_1_prompt = None
-
-        self.layer_1 = None
-        self.layer_1_prompt = None
-
-        self.layer_2 = None
-        self.layer_2_prompt = None
-        
-        self.layer_3_vipt = None
-
-        self.layer_4_vipt = None
->>>>>>> 049cb172bfda5be06fcd9bddd417aa39ce26eca4:MVT/lib/models/mobilevit_track/base_backbone_depth.py
 
         self.dilation = 1
 
@@ -53,7 +39,8 @@ class BaseEncoderViPT(nn.Module):
     def _forward_conv_layer(self, layer: nn.Module, x: Tensor) -> Tensor:
         return layer(x)
 
-    def _forward_MobileViT_layer(self, layer: nn.Module, x: Tensor, z: Tensor, x_dte: Tensor, z_dte: Tensor):
+    
+    def _forward_MobileViT_layer(self, layer: nn.Module, x: Tensor, z: Tensor):
 
         num_blocks = len(layer)
 
@@ -62,17 +49,13 @@ class BaseEncoderViPT(nn.Module):
         x = MobilenetV2_block(x)
         z = MobilenetV2_block(z)
 
-        # TODO second block for prompt
-        MobilenetV2_block_prompt = layer[2] 
-        x_dte = MobilenetV2_block_prompt(x_dte)
-        z_dte = MobilenetV2_block_prompt(z_dte)
-
         # compute output for remaining Transformer blocks (i.e., MobileViT/MobileViT-v2)
-        for i in range(2, num_blocks): # TODO: copy from vit prompt depth or ce depth
+        for i in range(1, num_blocks):
             block = layer[i]
             x, z = block(x, z)
 
         return x, z
+
 
     def _forward_MobileViTViPT_layer(self, layer: nn.Module, x: Tensor, z: Tensor, x_dte: Tensor, z_dte: Tensor):
 
@@ -97,81 +80,32 @@ class BaseEncoderViPT(nn.Module):
         print("Not Yet Implemented!")
         return None
 
-<<<<<<< HEAD:MVT/lib/models/mobilevit_track/base_backbone_vipt.py
     def forward_features(self, x, z, x_dte, z_dte): # todo: 4 inputs. also which of x z is template search
-=======
-    def forward_features(self, x, z): # todo: 4 inputs. also which of x z is template search
-
-        # # conv_1 (i.e., the first conv3x3 layer) output for
-        # x = self._forward_conv_layer(self.conv_1, x)
-        # z = self._forward_conv_layer(self.conv_1, z)
-
-        # # layer_1 (i.e., MobileNetV2 block) output
-        # x = self._forward_conv_layer(self.layer_1, x)
-        # z = self._forward_conv_layer(self.layer_1, z)
-
-        # # layer_2 (i.e., MobileNetV2 with down-sampling + 2 x MobileNetV2) output
-        # x = self._forward_conv_layer(self.layer_2, x)
-        # z = self._forward_conv_layer(self.layer_2, z)
-
-        # # layer_3 (i.e., MobileNetV2 with down-sampling + 2 x MobileViT-Track block) output
-        # x, z = self._forward_MobileViT_layer(self.layer_3, x, z)
-
-        # # layer_4 (i.e., MobileNetV2 with down-sampling + 4 x MobileViT-Track block) output
-        # x, z = self._forward_MobileViT_layer(self.layer_4, x, z)
-
-        # rgb_img
-        x_rgb = x[:, :3, :, :]
-        z_rgb = z[:, :3, :, :]
-        # depth_img
-        x_dte = x[:, 3:, :, :]
-        z_dte = z[:, 3:, :, :]
-        # overwrite x & z
-        x, z = x_rgb, z_rgb
->>>>>>> 049cb172bfda5be06fcd9bddd417aa39ce26eca4:MVT/lib/models/mobilevit_track/base_backbone_depth.py
 
         # conv_1 (i.e., the first conv3x3 layer) output for
         x = self._forward_conv_layer(self.conv_1, x)
         z = self._forward_conv_layer(self.conv_1, z)
-<<<<<<< HEAD:MVT/lib/models/mobilevit_track/base_backbone_vipt.py
         x_dte = self._forward_conv_layer(self.conv_1_dte, x_dte)
         z_dte = self._forward_conv_layer(self.conv_1_dte, z_dte)
-=======
-        x_dte = self._forward_conv_layer(self.conv_1_prompt, x_dte)
-        z_dte = self._forward_conv_layer(self.conv_1_prompt, z_dte)
->>>>>>> 049cb172bfda5be06fcd9bddd417aa39ce26eca4:MVT/lib/models/mobilevit_track/base_backbone_depth.py
 
         # layer_1 (i.e., MobileNetV2 block) output
         x = self._forward_conv_layer(self.layer_1, x)
         z = self._forward_conv_layer(self.layer_1, z)
-<<<<<<< HEAD:MVT/lib/models/mobilevit_track/base_backbone_vipt.py
         x_dte = self._forward_conv_layer(self.layer_1_dte, x_dte)
         z_dte = self._forward_conv_layer(self.layer_1_dte, z_dte)
-=======
-        x_dte = self._forward_conv_layer(self.layer_1_prompt, x_dte)
-        z_dte = self._forward_conv_layer(self.layer_1_prompt, z_dte)
->>>>>>> 049cb172bfda5be06fcd9bddd417aa39ce26eca4:MVT/lib/models/mobilevit_track/base_backbone_depth.py
 
         # layer_2 (i.e., MobileNetV2 with down-sampling + 2 x MobileNetV2) output
         x = self._forward_conv_layer(self.layer_2, x)
         z = self._forward_conv_layer(self.layer_2, z)
-<<<<<<< HEAD:MVT/lib/models/mobilevit_track/base_backbone_vipt.py
         x_dte = self._forward_conv_layer(self.layer_2_dte, x_dte)
         z_dte = self._forward_conv_layer(self.layer_2_dte, z_dte)
 
         # layer_3 (i.e., MobileNetV2 with down-sampling + 2 x MobileViT-Track block) output
         # x, z = self._forward_MobileViT_layer(self.layer_3, x, z)
         x, z = self._forward_MobileViTViPT_layer(self.layer_3, x, z, x_dte, z_dte)
-=======
-        x_dte = self._forward_conv_layer(self.layer_2_prompt, x_dte)
-        z_dte = self._forward_conv_layer(self.layer_2_prompt, z_dte)
-
-        # layer_3 (i.e., MobileNetV2 with down-sampling + 2 x MobileViT-Track block) output
-        x, z, x_dte, z_dte = self._forward_MobileViT_layer(self.layer_3_vipt, x, z, x_dte, z_dte)
->>>>>>> 049cb172bfda5be06fcd9bddd417aa39ce26eca4:MVT/lib/models/mobilevit_track/base_backbone_depth.py
 
         # layer_4 (i.e., MobileNetV2 with down-sampling + 4 x MobileViT-Track block) output
-        x, z, x_dte, z_dte = self._forward_MobileViT_layer(self.layer_4_vipt, x, z, x_dte, z_dte)
+        x, z = self._forward_MobileViT_layer(self.layer_4, x, z)
 
         return x, z
 

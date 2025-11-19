@@ -9,9 +9,9 @@ import math
 import torch
 from torch.nn import functional as F
 from typing import Optional, Dict, Tuple, Union, Sequence
-from .mobilevitvipt_block import MobileViTViPTBlock, MobileViTBlockv2
+from .mobilevit_vipt_block import MobileViTViPTBlock, MobileViTBlockv2
 
-class MobileViTViPT_Track_Block(MobileViTViPTBlock):
+class MobileViT_Track_ViPT_Block(MobileViTViPTBlock):
     """
     This class defines the `MobileViT block <https://arxiv.org/abs/2110.02178?context=cs.LG>`_
     """

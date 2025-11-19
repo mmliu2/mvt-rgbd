@@ -11,7 +11,7 @@ from torch.nn.parallel import DistributedDataParallel as DDP
 from .base_functions import *
 # network related
 from lib.models.mobilevit_track.mobilevit_track import build_mobilevit_track
-from lib.models.mobilevit_track.mobilevitvipt_track import build_mobilevitvipt_track
+from lib.models.mobilevit_track.mobilevit_track_vipt import build_mobilevit_track_vipt
 # forward propagation related
 from lib.train.actors import MobileViTTrackActor, MobileViTViPTTrackActor
 # for import modules
@@ -59,8 +59,8 @@ def run(settings):
     # Create network
     if settings.script_name == 'mobilevit_track':
         net = build_mobilevit_track(cfg)
-    elif settings.script_name == 'mobilevit_track_depth':
-        net = build_mobilevitvipt_track(cfg, training=True)
+    elif settings.script_name == 'mobilevit_track_vipt':
+        net = build_mobilevit_track_vipt(cfg, training=True)
     else:
         raise ValueError("illegal script name")
 
@@ -129,7 +129,7 @@ def run(settings):
         use_amp = getattr(cfg.TRAIN, "AMP", False)
         trainer = LTRTrainer(actor, [loader_train, loader_val], optimizer, settings, lr_scheduler, use_amp=use_amp)
 
-    elif settings.script_name == "mobilevit_track_depth":
+    elif settings.script_name == "mobilevit_track_vipt":
         focal_loss = FocalLoss()
         objective = {'giou': giou_loss, 'l1': l1_loss, 'focal': focal_loss, 'cls': BCEWithLogitsLoss(), 'pixelwise': box_pixelwise_metrics}
         loss_weight = {'giou': cfg.TRAIN.GIOU_WEIGHT, 'l1': cfg.TRAIN.L1_WEIGHT, 'focal': 1., 'cls': 1.0}
