@@ -16,6 +16,9 @@ import numpy as np
 def box_to_mask(box, H, W):
     mask = np.zeros((H, W), dtype=np.uint8)
 
+    if math.isnan(box[0]): 
+        return mask
+
     x, y, w, h = box
     x1 = max(int(x), 0)
     y1 = max(int(y), 0)
@@ -25,21 +28,41 @@ def box_to_mask(box, H, W):
 
     return mask
 
-def precision_recall_f1(pred_mask, gt_mask):
+def precision_recall_f1(pred_box, gt_box, H, W):
     """Compute pixel-wise precision, recall, and F1."""
+    # no confidence -> default 1
+    # if math.isnan(pred_box[0]): 
+    #     if math.isnan(gt_box[0]): return 1.0, 1.0, 1.0
+    #     else: return 0.0, 0.0, 0.0
+    # else:
+        # if math.isnan(gt_box[0]): return 0.0, 0.0, 0.0
+
+    pred_mask = box_to_mask(pred_box, H, W)
+    gt_mask = box_to_mask(gt_box, H, W)
+
     tp = np.logical_and(pred_mask, gt_mask).sum()
     fp = np.logical_and(pred_mask, np.logical_not(gt_mask)).sum()
     fn = np.logical_and(np.logical_not(pred_mask), gt_mask).sum()
 
-    if tp + fp == 0:
-        precision = 1.0  # No predicted pixels
-    else:
-        precision = tp / (tp + fp)
+    # if tp + fp == 0:
+    #     precision = 1.0 
+    # else:
+    #     precision = tp / (tp + fp)
 
-    if tp + fn == 0:
-        recall = 1.0  # No ground truth pixels
+    # if tp + fn == 0:
+    #     recall = 1.0 
+    # else:
+    #     recall = tp / (tp + fn)
+
+    if tp + fp + fn == 0:
+        precision = 1.0 
     else:
-        recall = tp / (tp + fn)
+        precision = tp / (tp + fp + fn)
+
+    if precision > 0.5 and not math.isnan(gt_box[0]): 
+        recall = 1.0
+    else:
+        recall = 0
 
     if precision + recall == 0:
         f1 = 0.0
@@ -113,43 +136,23 @@ def sequence_results_to_metrics(ffmpeg_path, sequences_dir, pred_dir):
         seq_re_list = []
         seq_f1_list = []
 
+        im = cv2.imread(im_files[0])
+        H, W, _ = im.shape
         for i in tqdm(range(0, num_frames), total=num_frames): 
-            im = cv2.imread(im_files[i])
-            H, W, _ = im.shape
-
-            if math.isnan(pred_boxes[i][0]): 
-                seq_pr_list.append(0.0)
-                seq_re_list.append(0.0)
-                seq_f1_list.append(0.0)
-                continue
-
-            if math.isnan(gt_boxes[i][0]): 
-                if math.isnan(pred_boxes[i][0]): 
-                    seq_pr_list.append(1.0)
-                    seq_re_list.append(1.0)
-                    seq_f1_list.append(1.0)
-                else:
-                    seq_pr_list.append(0.0)
-                    seq_re_list.append(0.0)
-                    seq_f1_list.append(0.0)
-                continue
-
-            pred_mask = box_to_mask(pred_boxes[i], H, W)
-            gt_mask = box_to_mask(gt_boxes[i], H, W)
-
-            precision, recall, f1 = precision_recall_f1(pred_mask, gt_mask)
+            precision, recall, f1 = precision_recall_f1(pred_boxes[i], gt_boxes[i], H, W)
 
             seq_pr_list.append(precision)
             seq_re_list.append(recall)
             seq_f1_list.append(f1)
             
-        print(np.mean(np.array(seq_f1_list)))
+        print('average f1 for sequence:', np.mean(np.array(seq_f1_list)))
 
         pr_list.append(seq_pr_list)
         re_list.append(seq_re_list)
         f1_list.append(seq_f1_list)
 
     metrics = compute_avg_metrics(pr_list, re_list, f1_list)
+    print(metrics)
     with open(os.path.join(save_dir, 'metrics.txt'), 'w') as f:
         f.write(str(metrics))
 

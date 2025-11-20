@@ -31,7 +31,7 @@ def sequence_results_to_video(ffmpeg_path, sequences_dir, pred_dir, sequence_nam
                     if f.lower().endswith(('.jpg', '.png'))])
     
     if num_frames == -1:
-        num_frames = len(im_files)
+        num_frames = len(im_files)-1
 
     # load boxes
     pred_boxes = []
@@ -98,7 +98,7 @@ def main():
     parser.add_argument('--sequence_name', type=str, default='adapter01_indoor', help='Sequence name.')
 
     parser.add_argument('--start_frame', type=int, default=0, help='Starting index.')
-    parser.add_argument('--num_frames', type=int, default=500, help='Number of frames in video. -1 for all frames')
+    parser.add_argument('--num_frames', type=int, default=-1, help='Number of frames in video. -1 for all frames')
     
     args = parser.parse_args()
 

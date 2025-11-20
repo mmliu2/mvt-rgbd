@@ -71,7 +71,7 @@ TRAIN:
   AMP: False # Automatic Mixed Precision Training
 TEST:
   DEVICE: cuda #{options: cuda, cpu}
-  EPOCH: 5 # 25
+  EPOCH: 10 # 25
   SEARCH_FACTOR: 4.0
   SEARCH_SIZE: 256
   TEMPLATE_FACTOR: 2.0
