@@ -20,10 +20,10 @@ def plot(log_path, output_path):
         for line in lines:
             match = re.match(r'\[(\w+):\s*(\d+)', line)
             split, epoch = match.group(1), int(match.group(2))
-            # print(split, epoch)
+            print(split, epoch)
             
             if split == 'train' and epoch == 1:
-                # print('reset')
+                print('reset')
                 train_f1 = []
                 test_f1 = []
                 train_loss = []
@@ -57,29 +57,53 @@ def plot(log_path, output_path):
     # Font size variable
     font_size = 16
 
-    fig, axes = plt.subplots(1, 2, figsize=(8, 3))
+    fig, axes = plt.subplots(1, 2, figsize=(16, 3))  # 1 row, 4 columns
 
     loss_train_color = '#7fc9ff'  # light blue
     loss_test_color  = '#0073e6'  # blue
     f1_train_color   = '#ffa9a9'  # light red / pink
     f1_test_color    = '#e60000'  # red
 
-    
-    axes[0].plot(train_epochs[:len(mvt_train_loss)], mvt_train_loss, marker='o', color=loss_train_color, label='Train')
-    axes[0].plot(test_epochs[:len(mvt_test_loss)], mvt_test_loss, marker='o', color=loss_test_color, label='Test')
+
+    # --- 1. DeT Loss ---
+    axes[0].plot(train_epochs, det_train_loss, marker='o', color=loss_train_color, label='Train')
+    axes[0].plot(test_epochs, det_test_loss, marker='o', color=loss_test_color, label='Test')
     axes[0].set_xlabel("Epochs", fontsize=font_size)
     axes[0].set_ylabel("Loss", fontsize=font_size)
-    axes[0].set_title("MVT-DeT Loss", fontsize=font_size)
+    axes[0].set_title("DeT Loss (MSE)", fontsize=font_size)
     axes[0].legend(fontsize=font_size)
     axes[0].grid(True)
 
-    axes[1].plot(train_epochs[:len(mvt_train_f1)], mvt_train_f1, marker='o', color=f1_train_color, label='Train')
-    axes[1].plot(test_epochs[:len(mvt_test_f1)], mvt_test_f1, marker='o', color=f1_test_color, label='Test')
+    # --- 2. DeT F1-Score ---
+    axes[1].plot(train_epochs, det_train_f1, marker='o', color=f1_train_color, label='Train')
+    axes[1].plot(test_epochs, det_test_f1, marker='o', color=f1_test_color, label='Test')
     axes[1].set_xlabel("Epochs", fontsize=font_size)
     axes[1].set_ylabel("F1", fontsize=font_size)
-    axes[1].set_title("MVT-DeT F1-Score", fontsize=font_size)
+    axes[1].set_title("DeT F1-Score", fontsize=font_size)
     axes[1].legend(fontsize=font_size)
     axes[1].grid(True)
+
+    # --- 3. Depth-Adapted MVT Loss ---
+    # axes[2].plot(train_epochs[:len(mvt_train_loss)], mvt_train_loss, marker='o', color=loss_train_color, label='Train')
+    # axes[2].plot(test_epochs[:len(mvt_test_loss)], mvt_test_loss, marker='o', color=loss_test_color, label='Test')
+    axes[2].plot(train_epochs[:len(mvt_train_loss)], mvt_train_loss, marker='o', color=loss_train_color)
+    axes[2].plot(test_epochs[:len(mvt_test_loss)], mvt_test_loss, marker='o', color=loss_test_color)
+    axes[2].set_xlabel("Epochs", fontsize=font_size)
+    axes[2].set_ylabel("Loss", fontsize=font_size)
+    axes[2].set_title("MVT-DeT Loss", fontsize=font_size)
+    # axes[2].legend(fontsize=font_size)
+    axes[2].grid(True)
+
+    # # --- 4. Depth-Adapted MVT F1-Score ---
+    # axes[3].plot(train_epochs[:len(mvt_train_f1)], mvt_train_f1, marker='o', color=f1_train_color, label='Train')
+    # axes[3].plot(test_epochs[:len(mvt_test_f1)], mvt_test_f1, marker='o', color=f1_test_color, label='Test')
+    axes[3].plot(train_epochs[:len(mvt_train_f1)], mvt_train_f1, marker='o', color=f1_train_color)
+    axes[3].plot(test_epochs[:len(mvt_test_f1)], mvt_test_f1, marker='o', color=f1_test_color)
+    axes[3].set_xlabel("Epochs", fontsize=font_size)
+    axes[3].set_ylabel("F1", fontsize=font_size)
+    axes[3].set_title("MVT-DeT F1-Score", fontsize=font_size)
+    # axes[3].legend(fontsize=font_size)
+    axes[3].grid(True)
 
     # --- Single legend for the whole figure ---
     lines_labels = [axes[0].get_lines()[0], axes[0].get_lines()[1]]  # first subplot's lines

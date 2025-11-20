@@ -72,7 +72,8 @@ def compute_avg_metrics(pr_list, re_list, f1_list):
     return {'seq_avg': seq_avg, 'frame_avg': frame_avg}
 
 def sequence_results_to_metrics(ffmpeg_path, sequences_dir, pred_dir):
-
+    save_dir = os.path.join(pred_dir, 'metrics')
+    os.makedirs(save_dir, exist_ok=True)
     pr_list = []
     re_list = []
     f1_list = []
@@ -80,20 +81,14 @@ def sequence_results_to_metrics(ffmpeg_path, sequences_dir, pred_dir):
     for sequence_name in sorted(os.listdir(sequences_dir)):
         gt_dir = os.path.join(sequences_dir, sequence_name)
         im_dir = os.path.join(gt_dir, 'color')
-        save_dir = os.path.join(pred_dir, 'videos')
-        os.makedirs(save_dir, exist_ok=True)
 
         gt_file = os.path.join(gt_dir, 'groundtruth.txt')
         pred_file = os.path.join(pred_dir, f'{sequence_name}.txt')
 
         if not os.path.isfile(pred_file): 
-            print('skipping', sequence_name)
+            print('  skipping', sequence_name)
             continue
-
-        # remove old frame files
-        frame_files = glob(os.path.join(save_dir, "frame*.png"))
-        for f in frame_files:
-            os.remove(f)
+        print(sequence_name)
         
         # get image files
         im_files = sorted([os.path.join(im_dir, f) for f in os.listdir(im_dir)
@@ -147,16 +142,16 @@ def sequence_results_to_metrics(ffmpeg_path, sequences_dir, pred_dir):
             seq_pr_list.append(precision)
             seq_re_list.append(recall)
             seq_f1_list.append(f1)
+            
+        print(np.mean(np.array(seq_f1_list)))
 
         pr_list.append(seq_pr_list)
         re_list.append(seq_re_list)
         f1_list.append(seq_f1_list)
 
     metrics = compute_avg_metrics(pr_list, re_list, f1_list)
-    print(metrics)
-    # print('Average precision across sequences:', avg_seq_pr)
-    # print('Average precision across frames:', avg_frame_pr)
-
+    with open(os.path.join(save_dir, 'metrics.txt'), 'w') as f:
+        f.write(str(metrics))
 
     
 def main():
