@@ -218,16 +218,19 @@ __marimo__/
 
 data/*
 
-MVT/pretrained_models/mobilevit_s.pt
+# MVT/pretrained_models/mobilevit_s.pt
 
 # output/checkpoints/train/mobilevit_track/mobilevit_256_128x1_got10k_ep100_cosine_annealing/*
-output/checkpoints/train/*
-output/logs
-output/test
-output/temp_folder
+outputs/*
+# checkpoints/train/*
+# output/logs
+# output/test
+# output/temp_folder
 
-tensorboard/*
-MVT/tensorboard/*
+# tensorboard/*
+# MVT/tensorboard/*
 
-MVT/lib/test/evaluation/local.py
-MVT/lib/train/admin/local.py
+# MVT/lib/test/evaluation/local.py
+# MVT/lib/train/admin/local.py
+
+DeT/pytracking/networks

@@ -1,3 +1,0 @@
-cat04_indoor
-mushroom03_wild
-duck01_wild
